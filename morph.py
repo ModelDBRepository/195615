@@ -66,21 +66,12 @@ h.lmin_kap    = kap_lmin # global
 ###############################################################################
 class Cell:
 	def __init__(self,morph):
-		self.morph = morph
-		self.axon = []
-		# Checks morph to determine type of cell
-		if self.morph == 'BS0284': 
-			cell = h.Import3d_Neurolucida3()
-			cell.input('BS0284.ASC')
-			i3d = h.Import3d_GUI(cell, 0)
-			i3d.instantiate(self)
-		elif self.morph == 'BS0409':
-			cell = h.Import3d_Neurolucida3()
-			cell.input('BS0409.ASC')
-			i3d = h.Import3d_GUI(cell, 0)
-			i3d.instantiate(self)
-			#self = load('BS0409.CNG.swc', xshift = self.x, yshift = self.y, zshift = self.z, cell = self)
-		print self.axon
+		morph = str(morph) + ".ASC"
+		self.axon = [] 
+		cell = h.Import3d_Neurolucida3()
+		cell.input(morph)
+		i3d = h.Import3d_GUI(cell, 0)
+		i3d.instantiate(self)
 		self.add_axon()
 		self.init_once()
 		
