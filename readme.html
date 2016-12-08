@@ -1,0 +1,63 @@
+<html><pre>
+This simulation was used in the following article: Neymotin SA,
+  Suter BA, Dura-Bernal S, Shepherd GMGS, Migliore M, Lytton WW.
+  Optimizing computer models of corticospinal neurons to replicate in
+  vitro dynamics.  Journal of Neurophysiology Published 19 October
+  2016 DOI: <a href="http://dx.doi.org/10.1152/jn.00570.2016">10.1152/jn.00570.2016</a>
+  <a href="http://jn.physiology.org/content/early/2016/10/14/jn.00570.2016.abstract">http://jn.physiology.org/content/early/2016/10/14/jn.00570.2016.abstract</a>
+
+The code in this folder generates Figure 6 from the paper.
+
+The simulation was tested/developed on LINUX systems, but may run on Microsoft Windows or Mac OS.
+
+To run the demo, you will need the NEURON simulator (newest development version of 7.5 and up;
+available at <a href="https://www.neuron.yale.edu/neuron/download/getdevel">https://www.neuron.yale.edu/neuron/download/getdevel</a>)
+compiled with python enabled. You will need Matplotlib to draw the output ( <a href="http://matplotlib.org/"</a>http://matplotlib.org/</a> ).
+
+Instructions to setup the model:
+  unzip the file
+  cd spidemo
+  nrnivmodl 
+
+The nrnivmodl command will produce an architecture-dependent folder with a script called special.
+On 64 bit systems the folder is x86_64.
+
+-----------------------------------------------------------------------------------------------------
+Then execute this to run the simulations and draw Figure 6:
+python -i Fig6.py
+
+Fig6.py loads the data and draws the output:
+<img src="./figure_1.png" alt="figure 1" width="550">									       
+
+The simulation takes a few minutes on Linux with 1 core (Intel(R) Core(TM) i7-4940MX CPU @ 3.10GHz).
+									       
+Simulations are run only the first time (since simulation data is saved).
+
+(To run the simulations of the simple and detailed cells separately:
+python sim.py SPI6.cfg
+python sim.py PTcell.cfg
+This will save output data to data/SPI6.pkl and data/morph.pkl.)
+
+The detailed cell simulation can take a few minutes to run, depending on your hardware setup.
+The simulation saves output data to the data subdirectory. 
+-----------------------------------------------------------------------------------------------------
+
+A single morphology (BS0284.ASC) for the detailed cell simulation was used in the paper. However, you
+can run the detailed model with other morphologies (e.g., BS0409.ASC). To do this change the "BS0284"
+to "BS0409" on this line in sim.py:
+  exec('cell = ' + dconf['cellfunc'] + '("BS0284")') # create the cell - can use different morphology eg included BS0409)
+
+The full set of morphologies for motor cortex corticospinal neurons from the Shepherd
+lab is available at:
+ <a href="http://neuromorpho.org/KeywordResult.jsp?str=suter_shepherd%2Ccorticospinal%2Cfrontal%2Cprimary%20motor">http://neuromorpho.org/KeywordResult.jsp?str=suter_shepherd%2Ccorticospinal%2Cfrontal%2Cprimary%20motor</a>
+
+-----------------------------------------------------------------------------------------------------
+
+For questions/comments email:  
+  Sam Neymotin (samn at neurosim dot downstate dot edu)
+  Ernie Forzano (eforzano at gmail dot com)
+  Ben Suter (ben dot suter at gmail dot com)
+  Salvador Dura-Bernal (salvadordura at gmail dot com)
+
+Special thanks to Ernie Forzano, Robert McDougal, & Michael Hines for help with importing variable
+morphology models.
