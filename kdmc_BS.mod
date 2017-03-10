@@ -17,7 +17,7 @@ NEURON {
     THREADSAFE
     SUFFIX kdmc
     USEION k READ ek WRITE ik
-    RANGE  gbar, minf, mtau, hinf, htau
+    RANGE  gbar, minf, mtau, hinf, htau, ik
     GLOBAL taumin
 }
 

@@ -33,6 +33,8 @@ PARAMETER {
   zetam = 2
   vhalfm = 4
   gmm=0.1	
+  USEGHK=1
+  erev = 100
 }
 
 
@@ -41,6 +43,7 @@ NEURON {
   USEION ca READ cai,cao WRITE ica
   RANGE gcalbar,cai, ica, gcal, ggk
   RANGE minf,tau
+  GLOBAL USEGHK
 }
 
 STATE {
@@ -58,15 +61,16 @@ ASSIGNED {
 INITIAL {
   rate(v)
   m = minf
-  gcal = gcalbar*m*m*h2(cai)
-  ggk=ghk(v,cai,cao)
-  ica = gcal*ggk
 }
 
 BREAKPOINT {
   SOLVE state METHOD cnexp
   gcal = gcalbar*m*m*h2(cai)
-  ggk=ghk(v,cai,cao)
+  if (USEGHK == 1) {
+    ggk=ghk(v,cai,cao)
+  } else {
+    ggk=v-erev
+  }
   ica = gcal*ggk
 }
 

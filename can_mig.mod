@@ -27,14 +27,16 @@ PARAMETER {
 	zetam = 2
 	vhalfm = -14
 	gmm=0.1	
+        USEGHK=1
+        erev = 100
 }
-
 
 NEURON {
 	SUFFIX can
 	USEION ca READ cai,cao WRITE ica
         RANGE gcanbar, ica, gcan       
         RANGE hinf,minf,taum,tauh
+        GLOBAL USEGHK
 }
 
 STATE {
@@ -59,8 +61,11 @@ INITIAL {
 BREAKPOINT {
 	SOLVE states METHOD cnexp
 	gcan = gcanbar*m*m*h*h2(cai)
-	ica = gcan*ghk(v,cai,cao)
-
+        if (USEGHK == 1) {
+          ica = gcan*ghk(v,cai,cao)
+        } else {
+          ica = gcan*(v-erev)
+        }
 }
 
 UNITSOFF

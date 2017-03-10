@@ -14,7 +14,7 @@ import os
 
 # determine config file name
 def setfcfg ():
-  fcfg = "PTcell.cfg" # default config file name
+  fcfg = "PTcell.BS0284.cfg" # default config file name
   for i in xrange(len(sys.argv)):
     if sys.argv[i].endswith(".cfg") and os.path.exists(sys.argv[i]):
       fcfg = sys.argv[i]
@@ -28,8 +28,8 @@ dfixed = dconf['fixed']
 sampr = dconf['sampr'] # sampling rate
 
 exec('from ' + dconf['cellimport'] + ' import ' + dconf['cellfunc']) # import cell creation function
-if fcfg == "PTcell.cfg":
-  exec('cell = ' + dconf['cellfunc'] + '("BS0284")') # create the cell - can use different morphology eg included BS0409)
+if fcfg.startswith('PTcell'):
+  exec('cell = ' + dconf['cellfunc'] + '(' + str(dconf['cellfuncargs']) + ')') # create the cell - can use different morphologies)
 else:
   exec('cell = ' + dconf['cellfunc'] + '()') # create the cell
 
@@ -135,6 +135,7 @@ if __name__ == "__main__":
     i = 1
     if sys.argv[i].count('python') > 0: i += 1 # skip -python or python
     if sys.argv[i].count('sim.py') > 0: i += 1 # skip sim.py
+    if sys.argv[i].count('.cfg') > 0: i += 1 # skip cfg file
     for j,p in enumerate(dprm.keys()): # parameter values to evaluate - optimized by evolution
       print i,j,p,sys.argv[i]
       exec(dprm[p].assignstr(float(sys.argv[i])))
@@ -148,4 +149,4 @@ if __name__ == "__main__":
       i += 1
   print 'running sim ... '
   dvec = gathertraces()
-  pickle.dump(dvec,open('data/'+dconf['cellimport']+'.pkl','w'))
+  pickle.dump(dvec,open(os.path.join('data',dconf['cellimport'].split('.cfg')[0]+'.pkl'),'w'))

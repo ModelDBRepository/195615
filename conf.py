@@ -60,7 +60,7 @@ def writeconf (fn,sec,opt,val):
 def str2bool (v): return v.lower() in ("true", "t", "1")
 
 # read config file
-def readconf (fn="PTcell.cfg"):
+def readconf (fn="PTcell.BS0284.cfg"):
   config = ConfigParser.ConfigParser()
   config.optionxform = str
   config.read(fn)
@@ -126,6 +126,7 @@ def readconf (fn="PTcell.cfg"):
   d['cellimport'] = confstr('run','cellimport','geom')
   d['cellfunc'] = confstr('run','cellfunc','makecell')
   d['useallspikes'] = confbool('run','useallspikes','False')
+  d['cellfuncargs'] = confstr('run','cellfuncargs','') # eg if cellfuncargs is (1,2,3) will call makecell(1,2,3)
   d['isivolts'] = confstr('data','isivolts','')
   d['evolts'] = confstr('data','evolts','')
   d['onvolts'] = confstr('data','onvolts','')

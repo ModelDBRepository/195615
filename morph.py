@@ -66,7 +66,7 @@ h.lmin_kap    = kap_lmin # global
 ###############################################################################
 class Cell:
 	def __init__(self,morph):
-		morph = str(morph) + ".ASC"
+		morph = str(morph)
 		self.axon = [] 
 		cell = h.Import3d_Neurolucida3()
 		cell.input(morph)

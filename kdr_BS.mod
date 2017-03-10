@@ -38,7 +38,7 @@ NEURON {
     THREADSAFE
     SUFFIX kdr
     USEION k READ ek WRITE ik
-    RANGE g, gbar, sh, ninf, taun, vhalfn
+    RANGE g, gbar, sh, ninf, taun, vhalfn, ik
 }
 
 STATE {
