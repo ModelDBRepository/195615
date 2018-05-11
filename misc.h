@@ -4,8 +4,6 @@
 #include <math.h>
 #include <limits.h> /* contains LONG_MAX */
 #include <time.h>
-#include <sys/time.h> 
-#include <values.h>
 #include <pthread.h>
 
 #if !defined(t)
@@ -89,8 +87,6 @@ extern double hoc_epsilon;
 extern int stoprun;
 extern void set_seed();
 extern void dshuffle(double* x,int nx);
-extern void mcell_ran4_init(u_int32_t);
-extern double mcell_ran4(u_int32_t *idx1, double *x, unsigned int n, double range);
 extern int nrn_mlh_gsort();
 extern int ivoc_list_count(Object*);
 extern Object* ivoc_list_item(Object*, int);
@@ -132,3 +128,9 @@ extern double ismono1 (double *x, int n, int flag);
 double kcorfast(double* input1, double* input2, double* i1d , double* i2d,int n,double* ps);
 double Rktau (double* x, double* y, int n); // R version
 double kcorfast (double* input1, double* input2, double* i1d , double* i2d,int n,double* ps);
+
+
+
+
+
+
