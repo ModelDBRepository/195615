@@ -53,10 +53,10 @@ typedef	unsigned char	ui1;	/* one byte unsigned integer */
 typedef	char		si1;	/* one byte signed integer */
 typedef unsigned short	ui2;	/* two byte unsigned integer */
 typedef short		si2;	/* two byte signed integer */
-typedef unsigned int	ui4;	/* four byte unsigned integer */ 
-typedef int		si4;	/* four byte signed integer */ 
-typedef float		sf4;	/* four byte signed floating point number */ 
-typedef double		sf8;	/* eight byte signed floating point number */ 
+typedef unsigned int	ui4;	/* four byte unsigned integer */
+typedef int		si4;	/* four byte signed integer */
+typedef float		sf4;	/* four byte signed floating point number */
+typedef double		sf8;	/* eight byte signed floating point number */
 
 extern double ERR,GET,SET,OK,NOP,ALL,NEG,POS,CHK,NOZ,GTH,GTE,LTH,LTE,EQU;
 extern double EQV,EQW,EQX,NEQ,SEQ,RXP,IBE,EBI,IBI,EBE;
@@ -69,15 +69,6 @@ extern void mcell_ran4_init(uint32_t idum);
 extern Symbol *hoc_get_symbol(char *);
 extern int hoc_is_tempobj_arg(int narg);
 Object* ivoc_list_item(Object*, int);
-#else // TODO: Update nrn master & C++ PR
-#ifdef __cplusplus
-extern "C" {
-#endif
-Object* ivoc_list_item(Object*, int);
-Symbol* hoc_get_symbol(const char* var);
-#ifdef __cplusplus
-}
-#endif
 #endif
 double *list_vector_resize(Object *ob, int i, int sz);
 int list_vector_px(Object *ob, int i, double** px);
