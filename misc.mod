@@ -41,6 +41,7 @@ NEURON {
 }
 
 VERBATIM
+#include "misc.h"
 #include <unistd.h>     /* F_OK     */
 #include <errno.h>      /* errno    */
 #include <signal.h>
@@ -48,7 +49,6 @@ VERBATIM
 #include <time.h>
 #include <stdio.h>
 #include <limits.h>
-extern int hoc_is_tempobj(int narg);
 ENDVERBATIM
 
 :* FUNCTION file_exist()
