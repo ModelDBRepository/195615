@@ -1,9 +1,9 @@
 """
-utils.py 
+utils.py
 
 Useful functions related to the parameters file
 
-Contributors: salvador dura@gmail.com 
+Contributors: salvador dura@gmail.com
 """
 import os, sys
 from neuron import h
@@ -13,9 +13,9 @@ def getSecName (sec, dirCellSecNames = None):
     if dirCellSecNames is None: dirCellSecNames = {}
 
     if '>.' in sec.name():
-        fullSecName = sec.name().split('>.')[1] 
+        fullSecName = sec.name().split('>.')[1]
     elif '.' in sec.name():
-        fullSecName = sec.name().split('.')[1]  
+        fullSecName = sec.name().split('.')[1]
     else:
         fullSecName = sec.name()
     if '[' in fullSecName:  # if section is array element
@@ -166,23 +166,23 @@ def getCellParams(cell):
         secs = [cell.soma]
     else:
         secs = []
-    
+
 
     # create dict with hname of each element in dir(cell)
-    dirCellHnames = {}  
+    dirCellHnames = {}
     for dirCellName in dirCell:
         try:
             dirCellHnames.update({getattr(cell, dirCellName).hname(): dirCellName})
         except:
             pass
-    # create dict with dir(cell) name corresponding to each hname 
-    dirCellSecNames = {} 
+    # create dict with dir(cell) name corresponding to each hname
+    dirCellSecNames = {}
     for sec in secs:
         dirCellSecNames.update({hname: name for hname,name in dirCellHnames.items() if hname == sec.hname()})
 
     secDic = {}
     synMechs = []
-    for sec in secs: 
+    for sec in secs:
         # create new section dict with name of section
         secName = getSecName(sec, dirCellSecNames)
 
@@ -202,7 +202,7 @@ def getCellParams(cell):
 
         # store 3d geometry
         numPoints = int(h.n3d())
-        if numPoints: 
+        if numPoints:
             points = []
             for ipoint in range(numPoints):
                 x = h.x3d(ipoint)
@@ -214,10 +214,10 @@ def getCellParams(cell):
 
         # store mechanisms
         varList = mechVarList()  # list of properties for all density mechanisms and point processes
-        ignoreMechs = ['dist']  # dist only used during cell creation 
+        ignoreMechs = ['dist']  # dist only used during cell creation
         mechDic = {}
         sec.push()  # access current section so ismembrane() works
-        for mech in dir(sec(0.5)): 
+        for mech in dir(sec(0.5)):
             if h.ismembrane(mech) and mech not in ignoreMechs:  # check if membrane mechanism
                 mechDic[mech] = {}  # create dic for mechanism properties
                 varNames = [varName.replace('_'+mech, '') for varName in varList['mechs'][mech]]
@@ -226,9 +226,9 @@ def getCellParams(cell):
                     try:
                         varVals = [seg.__getattribute__(mech).__getattribute__(varName) for seg in sec]
                         if len(set(varVals)) == 1:
-                            varVals = varVals[0] 
+                            varVals = varVals[0]
                         mechDic[mech][varName] = varVals
-                    except: 
+                    except:
                         pass
                         #print 'Could not read variable %s from mechanism %s'%(varName,mech)
 
@@ -236,7 +236,7 @@ def getCellParams(cell):
 
         # add synapses and point neurons
         # for now read fixed params, but need to find way to read only synapse params
-        
+
         pointps = {}
         for seg in sec:
             for ipoint,point in enumerate(seg.point_processes()):
@@ -256,7 +256,7 @@ def getCellParams(cell):
 
                     if not [_equal_dicts(synMech, synMech2, ignore_keys=['label']) for synMech2 in synMechs]:
                         synMechs.append(synMech)
-                
+
                 else: # assume its a non-synapse point process
                     pointpName = pointpMod + '_'+ str(len(pointps))
                     pointps[pointpName] = {}
@@ -266,7 +266,7 @@ def getCellParams(cell):
                         try:
                             pointps[pointpName][varName] = point.__getattribute__(varName)
                             # special condition for Izhi model, to set vinit=vr
-                            # if varName == 'vr': secDic[secName]['vinit'] = point.__getattribute__(varName) 
+                            # if varName == 'vr': secDic[secName]['vinit'] = point.__getattribute__(varName)
                         except:
                             print('Could not read %s variable from point process %s'%(varName,pointpName))
 
@@ -282,12 +282,12 @@ def getCellParams(cell):
         h.pop_section()  # to prevent section stack overflow
 
     # # store synMechs in input argument
-    # if synMechs: 
+    # if synMechs:
     #     for synMech in synMechs: synMechParams.append(synMech)
-        
+
     # store section lists
     secLists = h.List('SectionList')
-    if int(secLists.count()): 
+    if int(secLists.count()):
         secListDic = {}
         for i in range(int(secLists.count())):  # loop over section lists
             hname = secLists.o(i).hname()
@@ -304,7 +304,7 @@ def getCellParams(cell):
         if h.celsius != 6.3:  # if not default value
             print("Warning: h.celsius=%.4g in imported file -- you can set this value in simConfig['hParams']['celsius']"%(h.celsius))
 
-    # clean 
+    # clean
     h.initnrn()
     del(cell) # delete cell
     import gc; gc.collect()
@@ -341,4 +341,3 @@ dtrans['SPI6.kap_vhalfl'] = r'$v1/2l_{KA}$'
 dtrans['SPI6.kap_vhalfn'] = r'$v1/2n_{KA}$'
 dtrans['SPI6.kap_tq'] = 'h.tq_kap'
 dtrans['SPI6.kdr_vhalfn'] = r'$v1/2n_{Kdr}$'
-
