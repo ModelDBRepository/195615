@@ -64,7 +64,7 @@ def getfitdims ():
 # determine config file name
 def setfcfg ():
   fcfg = "PTcell.BS0284.cfg" # default config file name
-  for i in xrange(len(sys.argv)):
+  for i in range(len(sys.argv)):
     if sys.argv[i].endswith(".cfg") and os.path.exists(sys.argv[i]):
       fcfg = sys.argv[i]
   #print "config file is " , fcfg
@@ -97,7 +97,7 @@ def geterramp (nqa,row,lc):
 def adderrampcol (nqa,lc):
   nqa.tog('DB')
   if nqa.fi('erramp')== -1.0: nqa.resize('erramp'); nqa.pad()
-  for i in xrange(int(nqa.v[0].size())): nqa.getcol('erramp').x[i] = geterramp(nqa,i,lc)
+  for i in range(int(nqa.v[0].size())): nqa.getcol('erramp').x[i] = geterramp(nqa,i,lc)
   nqa.stat('erramp') # 
 
 # convert population to NQS
@@ -116,7 +116,7 @@ def pop2nq (fpop,fitdims=None):
     fit = m.fitness
     for i,val in enumerate(fit): nqa.v[i].append(val)
   # then setup the parameter values
-  for k in dprm.keys(): nqa.resize(k)
+  for k in list(dprm.keys()): nqa.resize(k)
   nqa.pad()
   for i,m in enumerate(fpop):
     idx = len(fitdims)
@@ -131,14 +131,14 @@ def pop2nq (fpop,fitdims=None):
 # print out param values (nqa is table, idx is row)
 def rowprmstr (nq,idx):
   s = ''
-  for i in xrange(len(fitdims),int(nq.m[0]),1): s += str(nq.v[i].x[idx]) + ' ' 
+  for i in range(len(fitdims),int(nq.m[0]),1): s += str(nq.v[i].x[idx]) + ' ' 
   return s
 
 # loads model archive and stores in global ark and nqa objects
 def loadark (fn):
   global ark,nqa
   ark = pickle.load(open(fn))
-  print len(ark), ' models in ', fn, ' archive.'
+  print(len(ark), ' models in ', fn, ' archive.')
   nqa = pop2nq(ark,fitdims) 
 
 if fcfg == 'SPI6.cfg': # simplified model
@@ -160,13 +160,13 @@ def naxbin (ax,nb): ax.locator_params(nbins=nb);
 # print full row (fitness and param values) at the given row (idx) from table (nqa)
 def rowstr (nq,idx):
   s = ''
-  for i in xrange(int(nq.m[0])): s += nq.s[i].s + ':' + str(nq.v[i].x[idx]) + "\n"
+  for i in range(int(nq.m[0])): s += nq.s[i].s + ':' + str(nq.v[i].x[idx]) + "\n"
   return s
 
 # print param values at the given row (idx) from table (nqa)
 def rowprmvals (nq,idx):
   lval = []
-  for i in xrange(len(fitdims),int(nq.m[0]),1): lval.append((nq.v[i].x[idx]))
+  for i in range(len(fitdims),int(nq.m[0]),1): lval.append((nq.v[i].x[idx]))
   return lval
 
 # find index of f in a (if not there return -1)
@@ -218,21 +218,21 @@ def runmodel (idx):
   # should move pkl file to arch index location so dont have to rerun
   fnew = os.path.join('data', fcfg.split('.cfg')[0] + '_' + str(idx) + '.pkl')
   if os.path.exists(fnew):
-    print 'model ' + str(idx) + ' already ran, data in', fnew
+    print('model ' + str(idx) + ' already ran, data in', fnew)
   else:
     cmd = 'python sim.py ' + fcfg + ' ' + rowprmstr(nqa,idx)
-    print cmd
+    print(cmd)
     os.system(cmd)
     if fcfg.startswith('PTcell'):
       shutil.move(os.path.join('data','morph.pkl'),fnew)
     else:
       shutil.move(os.path.join('data','SPI6.pkl'),fnew)
     if not os.path.exists(fnew):
-      print 'ERROR: could not run model!'
+      print('ERROR: could not run model!')
       return
   lastmodel = (fcfg,idx)
   dmod[lastmodel] = pickle.load(open(fnew)) # load the data
-  print 'model fitness error/params:', rowstr(nqa,idx)
+  print('model fitness error/params:', rowstr(nqa,idx))
   drawtraces((fcfg,idx))
 
 #
@@ -280,8 +280,8 @@ def draw1dfig (nq,scc,prct,lprm,nrow=1,ncol=1,gdx=1,stxt='a'):
     dat = numpy.array(nqt.getcol(prm).to_python())
     dat = dat - mean(dat)
     dat = dat / std(dat)
-    plot([pdx+1 for j in xrange(boteidx-botsidx)],dat[botsidx:boteidx],'^',markeredgecolor='m',markerfacecolor='none',markersize=60,linewidth=8)
-    plot([pdx+1 for j in xrange(topeidx-topsidx)],dat[topsidx:topeidx],'v',markeredgecolor='c',markerfacecolor='none',markersize=60,linewidth=8)
+    plot([pdx+1 for j in range(boteidx-botsidx)],dat[botsidx:boteidx],'^',markeredgecolor='m',markerfacecolor='none',markersize=60,linewidth=8)
+    plot([pdx+1 for j in range(topeidx-topsidx)],dat[topsidx:topeidx],'v',markeredgecolor='c',markerfacecolor='none',markersize=60,linewidth=8)
   ax.set_xticklabels([dtrans[prm] for prm in lprm])
   ax.set_xticks(linspace(1,len(lprm),len(lprm)))
   ylabel('Normalized parameter value'); #ylim((-4.2,4.2))
@@ -314,7 +314,7 @@ def getprmcors (nq,scc,prct,lprm):
   mprct[0:nrow,:] = mbot
   mprct[nrow:,:] = mtop
   mc = ones((nrow*2,nrow*2))
-  for i in xrange(nrow*2):
-    for j in xrange(i+1,nrow*2,1):
+  for i in range(nrow*2):
+    for j in range(i+1,nrow*2,1):
       mc[i,j]=mc[j,i]=pearsonr(mprct[i,:],mprct[j,:])[0]
   return mc

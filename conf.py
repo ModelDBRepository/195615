@@ -1,4 +1,4 @@
-import ConfigParser
+import configparser
 import io
 import pickle
 
@@ -50,10 +50,10 @@ class param:
 # specified in section (sec) , option (opt), and value (val)
 # saves to output filepath fn
 def writeconf (fn,sec,opt,val):
-  conf = ConfigParser.ConfigParser()
+  conf = configparser.ConfigParser()
   conf.readfp(io.BytesIO(def_config)) # start with defaults
   # then change entries by user-specs
-  for i in xrange(len(sec)): conf.set(sec[i],opt[i],val[i])
+  for i in range(len(sec)): conf.set(sec[i],opt[i],val[i])
   # write config file
   with open(fn, 'wb') as cfile: conf.write(cfile)
 
@@ -61,7 +61,7 @@ def str2bool (v): return v.lower() in ("true", "t", "1")
 
 # read config file
 def readconf (fn="PTcell.BS0284.cfg"):
-  config = ConfigParser.ConfigParser()
+  config = configparser.ConfigParser()
   config.optionxform = str
   config.read(fn)
 
@@ -93,7 +93,7 @@ def readconf (fn="PTcell.BS0284.cfg"):
     if config.has_option(base,'fpath'):
       fn = config.get(base,'fpath')
       d = pickle.load(open(fn))
-      print 'read dprm from ' , fn
+      print('read dprm from ' , fn)
       return d    
     #print base, ':', lprm
     for i,prm in enumerate(lprm):

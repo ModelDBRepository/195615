@@ -11,7 +11,7 @@ import os
 
 # check if data exists - if not, run simulations, saving output data
 dataDict = {'SPI6': 'SPI6','morph':'PTcell'}
-for k, v in dataDict.items() :
+for k, v in list(dataDict.items()) :
   if not os.path.exists('data/'+ k +'.pkl'):
     os.system('python sim.py ' + v +'.cfg')
 
@@ -37,7 +37,7 @@ for m,p in zip(lmodel,lmodelpath): dmod[m] = pickle.load(open(p))
 # determine config file name
 def setfcfg ():
   fcfg = "PTcell.cfg" # default config file name
-  for i in xrange(len(sys.argv)):
+  for i in range(len(sys.argv)):
     if sys.argv[i].endswith(".cfg") and os.path.exists(sys.argv[i]):
       fcfg = sys.argv[i]
   #print "config file is " , fcfg
@@ -96,7 +96,7 @@ def drawsuptraces ():
       else: ypos += 15
     cdx += 1
     ax.set_xticks([]); ax.set_yticks([]);
-  for i in xrange(1,ncol+1,1):
+  for i in range(1,ncol+1,1):
     ax=subplot(1,ncol,i)
     xlim((400,1600)); 
     ylim((-125,600)); 

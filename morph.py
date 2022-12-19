@@ -100,7 +100,7 @@ class Cell:
 			sec.insert('k_ion')
 			sec.insert('na_ion')
 			if not (h.ismembrane('ih', sec= sec)): 
-				print sec
+				print(sec)
 		self.setallprop()
 		self.addapicchan()
 		self.apicchanprop()
@@ -195,7 +195,7 @@ class Cell:
 		for sec in self.all:
 	  		after += sec.nseg 
 
-  		print "geom_nseg: changed from ", before, " to ", after, " total segments"
+  		print("geom_nseg: changed from ", before, " to ", after, " total segments")
 
 
 	def lambda_f(self, section): 

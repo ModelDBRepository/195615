@@ -15,10 +15,10 @@ import os
 # determine config file name
 def setfcfg ():
   fcfg = "PTcell.BS0284.cfg" # default config file name
-  for i in xrange(len(sys.argv)):
+  for i in range(len(sys.argv)):
     if sys.argv[i].endswith(".cfg") and os.path.exists(sys.argv[i]):
       fcfg = sys.argv[i]
-  print "config file is " , fcfg
+  print("config file is " , fcfg)
   return fcfg
 
 fcfg=setfcfg() # config file name
@@ -35,7 +35,7 @@ else:
 
 exec('import ' + dconf['cellimport']) # import the file's variables too, so can access them
 
-for p in dfixed.values(): exec(p.assignstr(p.origval)) # fixed values
+for p in list(dfixed.values()): exec(p.assignstr(p.origval)) # fixed values
 try:
   ic = h.IClamp(0.5,sec=cell.soma[0])
 except:
@@ -112,15 +112,15 @@ def myrun (tstop=mytstop,inj=0.75,draw=True,prtime=False):
   interpvolt(rd,1e3/sampr) # interpolate recorded voltage to fixed temporal grid
   if draw: plotout(rd)
   if prtime:
-    print rd['vspike'].size()*1e3/ic.dur , 'Hz, during stim.'
+    print(rd['vspike'].size()*1e3/ic.dur , 'Hz, during stim.')
     clockEnd = time()
-    print '\nsim runtime:',str(round(clockEnd-clockStart,2)),'secs'   
+    print('\nsim runtime:',str(round(clockEnd-clockStart,2)),'secs')   
 
 # run all current injections and return output voltage 
 def gathertraces ():
   dvec = {}
   for i,inj in enumerate(I):
-    print i,inj
+    print(i,inj)
     myrun(tstop=mytstop,inj=inj,draw=False,prtime=True)
     if i == 0: dvec['vt'] = rd['vt_interp'].to_python()
     dvec[inj] = rd[voltLocInterp].to_python()
@@ -129,15 +129,15 @@ def gathertraces ():
 evolts = numpy.load(dconf['evolts']) # experimental voltage traces
   
 if __name__ == "__main__":
-  if len(sys.argv) < len(dprm.keys()):
-    print 'usage: sim.py [cfg file] [params] [fout]'
+  if len(sys.argv) < len(list(dprm.keys())):
+    print('usage: sim.py [cfg file] [params] [fout]')
   else:
     i = 1
     if sys.argv[i].count('python') > 0: i += 1 # skip -python or python
     if sys.argv[i].count('sim.py') > 0: i += 1 # skip sim.py
     if sys.argv[i].count('.cfg') > 0: i += 1 # skip cfg file
     for j,p in enumerate(dprm.keys()): # parameter values to evaluate - optimized by evolution
-      print i,j,p,sys.argv[i]
+      print(i,j,p,sys.argv[i])
       exec(dprm[p].assignstr(float(sys.argv[i])))
       i += 1
     if 'postassign' in dconf: exec(dconf['postassign'])
@@ -147,6 +147,6 @@ if __name__ == "__main__":
       elif sys.argv[i].count('python') > 0 or sys.argv[i].count('sim.py') > 0:
         pass # pass, it's call from commandline
       i += 1
-  print 'running sim ... '
+  print('running sim ... ')
   dvec = gathertraces()
   pickle.dump(dvec,open(os.path.join('data',dconf['cellimport'].split('.cfg')[0]+'.pkl'),'w'))
