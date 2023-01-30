@@ -1,9 +1,9 @@
 """
-utils.py 
+utils.py
 
 Useful functions related to the parameters file
 
-Contributors: salvador dura@gmail.com 
+Contributors: salvador dura@gmail.com
 """
 import os, sys
 from neuron import h
@@ -13,9 +13,9 @@ def getSecName (sec, dirCellSecNames = None):
     if dirCellSecNames is None: dirCellSecNames = {}
 
     if '>.' in sec.name():
-        fullSecName = sec.name().split('>.')[1] 
+        fullSecName = sec.name().split('>.')[1]
     elif '.' in sec.name():
-        fullSecName = sec.name().split('.')[1]  
+        fullSecName = sec.name().split('.')[1]
     else:
         fullSecName = sec.name()
     if '[' in fullSecName:  # if section is array element
@@ -37,18 +37,18 @@ def importCellParams (fileName, labels, values, key = None):
             if filePath not in sys.path:  # add to path if not there (need to import module)
                 sys.path.insert(0, filePath)
             moduleName = fileNameOnly.split('.py')[0]  # remove .py to obtain module name
-            exec('import '+ moduleName + ' as tempModule') in locals() # import module dynamically
+            exec(('import '+ moduleName + ' as tempModule'), locals()) # import module dynamically
             modulePointer = tempModule
             paramLabels = getattr(modulePointer, labels) # tuple with labels
             paramValues = getattr(modulePointer, values)  # variable with paramValues
             if key:  # if paramValues = dict
                 paramValues = paramValues[key]
-            params = dict(zip(paramLabels, paramValues))
+            params = dict(list(zip(paramLabels, paramValues)))
             sys.path.remove(filePath)
         except:
-            print "Error loading cell parameter values from " + fileName
+            print("Error loading cell parameter values from " + fileName)
     else:
-        print "Trying to import izhi params from a file without the .py extension"
+        print("Trying to import izhi params from a file without the .py extension")
     return params
 
 
@@ -58,23 +58,23 @@ def mechVarList ():
     for i, mechtype in enumerate(['mechs','pointps']):
         mt = h.MechanismType(i)  # either distributed mechs (0) or point process (1)
         varList[mechtype] = {}
-        for j in xrange(int(mt.count())):
+        for j in range(int(mt.count())):
             mt.select(j)
             mt.selected(msname)
             ms = h.MechanismStandard(msname[0], 1) # PARAMETER (modifiable)
             varList[mechtype][msname[0]] = []
             propName = h.ref('')
-            for var in xrange(int(ms.count())):
+            for var in range(int(ms.count())):
                 k = ms.name(propName, var)
                 varList[mechtype][msname[0]].append(propName[0])
     return varList
 
 def _equal_dicts (d1, d2, ignore_keys):
     ignored = set(ignore_keys)
-    for k1, v1 in d1.iteritems():
+    for k1, v1 in d1.items():
         if k1 not in ignored and (k1 not in d2 or d2[k1] != v1):
             return False
-    for k2, v2 in d2.iteritems():
+    for k2, v2 in d2.items():
         if k2 not in ignored and k2 not in d1:
             return False
     return True
@@ -97,7 +97,7 @@ def importCell (fileName, cellName, cellArgs = None):
         if filePath not in sys.path:  # add to path if not there (need to import module)
             sys.path.insert(0, filePath)
         moduleName = fileNameOnly.split('.py')[0]  # remove .py to obtain module name
-        exec('import ' + moduleName + ' as tempModule') in globals(), locals() # import module dynamically
+        exec(('import ' + moduleName + ' as tempModule'), globals(), locals()) # import module dynamically
         modulePointer = tempModule
         if isinstance(cellArgs, dict):
             cell = getattr(modulePointer, cellName)(**cellArgs) # create cell using template, passing dict with args
@@ -105,7 +105,7 @@ def importCell (fileName, cellName, cellArgs = None):
             cell = getattr(modulePointer, cellName)(*cellArgs)  # create cell using template, passing list with args
         sys.path.remove(filePath)
     else:
-        print "File name should be either .hoc or .py file"
+        print("File name should be either .hoc or .py file")
         return
 
     secDic, secListDic, synMechs = getCellParams(cell)
@@ -117,7 +117,7 @@ def importCellsFromNet (netParams, fileName, labelList, condsList, cellNamesList
 
     ''' Import cell from HOC template or python file into framework format (dict of sections, with geom, topol, mechs, syns)'''
     if fileName.endswith('.hoc'):
-        print 'Importing from .hoc network not yet supported'
+        print('Importing from .hoc network not yet supported')
         return
         # h.load_file(fileName)
         # for cellName in cellNames:
@@ -131,19 +131,19 @@ def importCellsFromNet (netParams, fileName, labelList, condsList, cellNamesList
             sys.path.insert(0, filePath)
         moduleName = fileNameOnly.split('.py')[0]  # remove .py to obtain module name
         os.chdir(filePath)
-        print '\nRunning network in %s to import cells into NetPyNE ...\n'%(fileName)
-        print h.name_declared('hcurrent')
+        print('\nRunning network in %s to import cells into NetPyNE ...\n'%(fileName))
+        print(h.name_declared('hcurrent'))
         from neuron import load_mechanisms
         load_mechanisms(filePath)
-        exec('import ' + moduleName + ' as tempModule') in globals(), locals() # import module dynamically
+        exec(('import ' + moduleName + ' as tempModule'), globals(), locals()) # import module dynamically
         modulePointer = tempModule
         sys.path.remove(filePath)
     else:
-        print "File name should be either .hoc or .py file"
+        print("File name should be either .hoc or .py file")
         return
 
     for label, conds, cellName in zip(labelList, condsList, cellNamesList):
-        print '\nImporting %s from %s ...'%(cellName, fileName)
+        print('\nImporting %s from %s ...'%(cellName, fileName))
         exec('cell = tempModule' + '.' + cellName)
         #cell = getattr(modulePointer, cellName) # get cell object
         secs, secLists, synMechs = getCellParams(cell)
@@ -166,23 +166,23 @@ def getCellParams(cell):
         secs = [cell.soma]
     else:
         secs = []
-    
+
 
     # create dict with hname of each element in dir(cell)
-    dirCellHnames = {}  
+    dirCellHnames = {}
     for dirCellName in dirCell:
         try:
             dirCellHnames.update({getattr(cell, dirCellName).hname(): dirCellName})
         except:
             pass
-    # create dict with dir(cell) name corresponding to each hname 
-    dirCellSecNames = {} 
+    # create dict with dir(cell) name corresponding to each hname
+    dirCellSecNames = {}
     for sec in secs:
-        dirCellSecNames.update({hname: name for hname,name in dirCellHnames.iteritems() if hname == sec.hname()})
+        dirCellSecNames.update({hname: name for hname,name in dirCellHnames.items() if hname == sec.hname()})
 
     secDic = {}
     synMechs = []
-    for sec in secs: 
+    for sec in secs:
         # create new section dict with name of section
         secName = getSecName(sec, dirCellSecNames)
 
@@ -202,7 +202,7 @@ def getCellParams(cell):
 
         # store 3d geometry
         numPoints = int(h.n3d())
-        if numPoints: 
+        if numPoints:
             points = []
             for ipoint in range(numPoints):
                 x = h.x3d(ipoint)
@@ -214,10 +214,10 @@ def getCellParams(cell):
 
         # store mechanisms
         varList = mechVarList()  # list of properties for all density mechanisms and point processes
-        ignoreMechs = ['dist']  # dist only used during cell creation 
+        ignoreMechs = ['dist']  # dist only used during cell creation
         mechDic = {}
         sec.push()  # access current section so ismembrane() works
-        for mech in dir(sec(0.5)): 
+        for mech in dir(sec(0.5)):
             if h.ismembrane(mech) and mech not in ignoreMechs:  # check if membrane mechanism
                 mechDic[mech] = {}  # create dic for mechanism properties
                 varNames = [varName.replace('_'+mech, '') for varName in varList['mechs'][mech]]
@@ -226,9 +226,9 @@ def getCellParams(cell):
                     try:
                         varVals = [seg.__getattribute__(mech).__getattribute__(varName) for seg in sec]
                         if len(set(varVals)) == 1:
-                            varVals = varVals[0] 
+                            varVals = varVals[0]
                         mechDic[mech][varName] = varVals
-                    except: 
+                    except:
                         pass
                         #print 'Could not read variable %s from mechanism %s'%(varName,mech)
 
@@ -236,7 +236,7 @@ def getCellParams(cell):
 
         # add synapses and point neurons
         # for now read fixed params, but need to find way to read only synapse params
-        
+
         pointps = {}
         for seg in sec:
             for ipoint,point in enumerate(seg.point_processes()):
@@ -252,11 +252,11 @@ def getCellParams(cell):
                         try:
                             synMech[varName] = point.__getattribute__(varName)
                         except:
-                            print 'Could not read variable %s from synapse %s'%(varName,synMech['label'])
+                            print('Could not read variable %s from synapse %s'%(varName,synMech['label']))
 
                     if not [_equal_dicts(synMech, synMech2, ignore_keys=['label']) for synMech2 in synMechs]:
                         synMechs.append(synMech)
-                
+
                 else: # assume its a non-synapse point process
                     pointpName = pointpMod + '_'+ str(len(pointps))
                     pointps[pointpName] = {}
@@ -266,9 +266,9 @@ def getCellParams(cell):
                         try:
                             pointps[pointpName][varName] = point.__getattribute__(varName)
                             # special condition for Izhi model, to set vinit=vr
-                            # if varName == 'vr': secDic[secName]['vinit'] = point.__getattribute__(varName) 
+                            # if varName == 'vr': secDic[secName]['vinit'] = point.__getattribute__(varName)
                         except:
-                            print 'Could not read %s variable from point process %s'%(varName,pointpName)
+                            print('Could not read %s variable from point process %s'%(varName,pointpName))
 
         if pointps: secDic[secName]['pointps'] = pointps
 
@@ -282,14 +282,14 @@ def getCellParams(cell):
         h.pop_section()  # to prevent section stack overflow
 
     # # store synMechs in input argument
-    # if synMechs: 
+    # if synMechs:
     #     for synMech in synMechs: synMechParams.append(synMech)
-        
+
     # store section lists
     secLists = h.List('SectionList')
-    if int(secLists.count()): 
+    if int(secLists.count()):
         secListDic = {}
-        for i in xrange(int(secLists.count())):  # loop over section lists
+        for i in range(int(secLists.count())):  # loop over section lists
             hname = secLists.o(i).hname()
             if hname in dirCellHnames:  # use python variable name
                 secListName = dirCellHnames[hname]
@@ -302,9 +302,9 @@ def getCellParams(cell):
     # celsius warning
     if hasattr(h, 'celsius'):
         if h.celsius != 6.3:  # if not default value
-            print "Warning: h.celsius=%.4g in imported file -- you can set this value in simConfig['hParams']['celsius']"%(h.celsius)
+            print("Warning: h.celsius=%.4g in imported file -- you can set this value in simConfig['hParams']['celsius']"%(h.celsius))
 
-    # clean 
+    # clean
     h.initnrn()
     del(cell) # delete cell
     import gc; gc.collect()
@@ -341,4 +341,3 @@ dtrans['SPI6.kap_vhalfl'] = r'$v1/2l_{KA}$'
 dtrans['SPI6.kap_vhalfn'] = r'$v1/2n_{KA}$'
 dtrans['SPI6.kap_tq'] = 'h.tq_kap'
 dtrans['SPI6.kdr_vhalfn'] = r'$v1/2n_{Kdr}$'
-
