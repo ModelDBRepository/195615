@@ -196,7 +196,7 @@ def getCellParams(cell):
         for geomParam in standardGeomParams:
             #if geomParam in secDir:
             try:
-                secDic[secName]['geom'][geomParam] = sec.__getattribute__(geomParam)
+                secDic[secName]['geom'][geomParam] = getattr(sec, geomParam)
             except:
                 pass
 
@@ -224,7 +224,7 @@ def getCellParams(cell):
                 varVals = []
                 for varName in varNames:
                     try:
-                        varVals = [seg.__getattribute__(mech).__getattribute__(varName) for seg in sec]
+                        varVals = [getattr(getattr(seg, mech), varName) for seg in sec]
                         if len(set(varVals)) == 1:
                             varVals = varVals[0]
                         mechDic[mech][varName] = varVals
@@ -250,7 +250,7 @@ def getCellParams(cell):
                     #synMech['loc'] = seg.x
                     for varName in varNames:
                         try:
-                            synMech[varName] = point.__getattribute__(varName)
+                            synMech[varName] = getattr(point, varName)
                         except:
                             print('Could not read variable %s from synapse %s'%(varName,synMech['label']))
 
@@ -264,7 +264,7 @@ def getCellParams(cell):
                     pointps[pointpName]['loc'] = seg.x
                     for varName in varNames:
                         try:
-                            pointps[pointpName][varName] = point.__getattribute__(varName)
+                            pointps[pointpName][varName] = getattr(point, varName)
                             # special condition for Izhi model, to set vinit=vr
                             # if varName == 'vr': secDic[secName]['vinit'] = point.__getattribute__(varName)
                         except:
